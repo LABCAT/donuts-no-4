@@ -73,6 +73,14 @@ const P5SketchWithAudio = () => {
             }
         }
 
+        p.colourMode = 'rainbow';
+
+        p.colourModeOptions = ['rainbow', 'hue', 'shadestints'];
+
+        p.colourModeHue = 0;
+
+        p.bgColour = 0;
+
         p.donutSize = 0;
 
         p.donutOpacity = 0;
@@ -89,22 +97,35 @@ const P5SketchWithAudio = () => {
                 p.donutSize = p.height / 4 / 64 * currentCue;
                 p.donutOpacity = 1 / 64 * currentCue;
             }
-            else {
-
+            else if(currentCue % 32 === 1) {
+                const options = p.colourModeOptions.slice();
+                options.splice(options.indexOf(p.colourMode), 1)
+                p.colourMode = p.random(options); 
+                p.colourModeHue = p.random(0, 360); 
             }
 
             if(currentCue < 185) {
-                p.background(0);
+                p.background(p.bgColour);
+            }
+            else {
+                p.colourMode = 'rainbow';
             }
 
             for (let x = 1; x <= 3; x++) {
                 for (let y = 1; y <= 2; y++) {
-                    const colour = p.color(p.random(0, 360), 100, 100, p.donutOpacity),
-                        numOfRotations = p.random(p.rotationOptions),
+                    const numOfRotations = p.random(p.rotationOptions),
                         shape = p.random(p.shapeOptions), 
                         translateX = p.width / 3 * x - p.width / 6,
                         translateY = p.height / 2 * y - p.height / 4;
-
+                    let colour = null;
+                     switch (p.colourMode) {
+                        case 'shadestints':
+                            colour = p.color(p.colourModeHue, p.random(50, 100), p.random(50, 100), p.donutOpacity)
+                            break;
+                        default:
+                            colour = p.color(p.random(0, 360), 100, 100, p.donutOpacity)
+                            break;
+                    }
                     p.translate(translateX, translateY); 
                     p.drawDonut(colour, numOfRotations, shape);
                     p.translate(-translateX, -translateY);
@@ -118,8 +139,10 @@ const P5SketchWithAudio = () => {
             p.strokeWeight(0.3);
             p.noFill();
             for (var i = 0; i < (numOfRotations * 2); i ++) {
-                const colour = p.color(p.random(0, 360), 100, 100, p.donutOpacity)
-                p.stroke(colour);
+                if(p.colourMode === 'rainbow') {
+                    const colour = p.color(p.random(0, 360), 100, 100, p.donutOpacity)
+                    p.stroke(colour);
+                }
                 for (var j = 0; j <=5; j++) {
                     //call the function as detemined by the variable shape
                     //rect and ellipse are built in p5.js
