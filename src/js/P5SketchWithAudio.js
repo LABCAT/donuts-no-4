@@ -81,6 +81,8 @@ const P5SketchWithAudio = () => {
 
         p.bgColour = 0;
 
+        p.xDonuts = p.random([3,4,6]);
+
         p.donutSize = 0;
 
         p.donutOpacity = 0;
@@ -94,14 +96,18 @@ const P5SketchWithAudio = () => {
             const { currentCue } = note;
             
             if(currentCue < 65) {
-                p.donutSize = p.height / 4 / 64 * currentCue;
+                const heightDivisor = p.xDonuts === 6 ? 8 : p.xDonuts === 4 ? 6 : 4;
+                p.donutSize = p.height / heightDivisor / 64 * currentCue;
                 p.donutOpacity = 1 / 64 * currentCue;
             }
             else if(currentCue % 32 === 1) {
-                const options = p.colourModeOptions.slice();
+                p.xDonuts = p.random([3,4,6]);
+                const options = p.colourModeOptions.slice(),
+                    heightDivisor = p.xDonuts === 6 ? 8 : p.xDonuts === 4 ? 6 : 4;
                 options.splice(options.indexOf(p.colourMode), 1)
                 p.colourMode = p.random(options); 
                 p.colourModeHue = p.random(0, 360); 
+                p.donutSize = p.height / heightDivisor;
             }
 
             if(currentCue < 185) {
@@ -111,12 +117,14 @@ const P5SketchWithAudio = () => {
                 p.colourMode = 'rainbow';
             }
 
-            for (let x = 1; x <= 3; x++) {
-                for (let y = 1; y <= 2; y++) {
+            const yLoops = p.xDonuts % 3 === 0 ? (p.xDonuts / 3 * 2) : 3;
+
+            for (let x = 1; x <= p.xDonuts; x++) {
+                for (let y = 1; y <= yLoops; y++) {
                     const numOfRotations = p.random(p.rotationOptions),
                         shape = p.random(p.shapeOptions), 
-                        translateX = p.width / 3 * x - p.width / 6,
-                        translateY = p.height / 2 * y - p.height / 4;
+                        translateX = p.width / p.xDonuts * x - p.width / (p.xDonuts * 2),
+                        translateY = p.height / yLoops * y - p.height / (yLoops * 2);
                     let colour = null;
                      switch (p.colourMode) {
                         case 'shadestints':
