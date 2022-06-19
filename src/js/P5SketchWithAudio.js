@@ -75,7 +75,7 @@ const P5SketchWithAudio = () => {
 
         p.colourMode = 'rainbow';
 
-        p.colourModeOptions = ['rainbow', 'hue', 'shadestints'];
+        p.colourModeOptions = ['rainbow', 'hue', 'monochromatic', 'complementary', 'triadic'];
 
         p.colourModeHue = 0;
 
@@ -127,8 +127,19 @@ const P5SketchWithAudio = () => {
                         translateY = p.height / yLoops * y - p.height / (yLoops * 2);
                     let colour = null;
                      switch (p.colourMode) {
-                        case 'shadestints':
+                        case 'monochromatic':
                             colour = p.color(p.colourModeHue, p.random(50, 100), p.random(50, 100), p.donutOpacity)
+                            break;
+                        case 'complementary':
+                            const complementaryHue = p.colourModeHue + 180 > 360 ? p.colourModeHue - 180 : p.colourModeHue + 180,
+                                hue = p.random([p.colourModeHue, complementaryHue]);
+                            colour = p.color(hue, p.random(50, 100), p.random(50, 100), p.donutOpacity)
+                            break;
+                        case 'triadic':
+                            const hue2 = p.colourModeHue + 120 > 360 ? p.colourModeHue - 120 : p.colourModeHue + 120,
+                                hue3 = hue2 + 120 > 360 ? p.colourModeHue - 240 : p.colourModeHue + 120,
+                                triadicHue = p.random([p.colourModeHue, hue2, hue3]);
+                            colour = p.color(triadicHue, p.random(50, 100), p.random(50, 100), p.donutOpacity)
                             break;
                         default:
                             colour = p.color(p.random(0, 360), 100, 100, p.donutOpacity)
